@@ -4,7 +4,7 @@ const { getFunFact } = require("../services/funFactService");
 async function classifyNumber(req, res) {
   const { number } = req.query;
 
-  // Input validation – only reject truly invalid inputs
+  // Input validation – reject truly invalid inputs
   if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
@@ -15,7 +15,7 @@ async function classifyNumber(req, res) {
   // Convert the input to a number
   const num = parseFloat(number);
 
-  // Check if the conversion resulted in NaN (e.g., for non-numeric strings)
+  // Check if the conversion resulted in NaN or if it's not an integer
   if (isNaN(num) || !Number.isInteger(num)) {
     return res.status(400).json({
       number: number,
@@ -34,7 +34,9 @@ async function classifyNumber(req, res) {
     const properties = [];
 
     // Add "armstrong" if the number is an Armstrong number
-    if (armstrong) properties.push("armstrong");
+    if (armstrong) {
+      properties.push("armstrong");
+    }
 
     // Add "even" or "odd" based on the number's parity
     if (num % 2 === 0) {
@@ -42,6 +44,10 @@ async function classifyNumber(req, res) {
     } else {
       properties.push("odd");
     }
+
+    // Ensure only valid properties are included in the response
+    const validProperties = ["armstrong", "even", "odd"];
+    const filteredProperties = properties.filter(property => validProperties.includes(property));
 
     // Fetch fun fact
     let funFact = null;
@@ -57,7 +63,7 @@ async function classifyNumber(req, res) {
       number: num,
       is_prime: prime,
       is_perfect: false,
-      properties: properties, // Only contains "armstrong", "odd", or "even"
+      properties: filteredProperties, // Only contains "armstrong", "odd", or "even"
       digit_sum: sum,
       fun_fact: funFact,
     });
