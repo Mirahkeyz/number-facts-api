@@ -30,9 +30,14 @@ async function classifyNumber(req, res) {
       digitSum(num),
     ]);
 
+    // Ensure properties only contain "armstrong", "odd", or "even"
     const properties = [];
     if (armstrong) properties.push("armstrong");
-    properties.push(num % 2 === 0 ? "even" : "odd");
+    if (num % 2 === 0) {
+      properties.push("even");
+    } else {
+      properties.push("odd");
+    }
 
     let funFact = null;
     try {
