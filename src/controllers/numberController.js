@@ -4,15 +4,24 @@ const { getFunFact } = require("../services/funFactService");
 async function classifyNumber(req, res) {
   const { number } = req.query;
 
-  // Strict input validation to allow only valid numbers
-  if (!/^-?\d+(\.\d+)?$/.test(number)) {
+  // Input validation – only reject truly invalid inputs
+  if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
     });
   }
 
+  // Convert the input to a number
   const num = parseFloat(number);
+
+  // Check if the conversion resulted in NaN (e.g., for non-numeric strings)
+  if (isNaN(num)) {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
 
   try {
     const [prime, armstrong, sum] = await Promise.all([
@@ -24,7 +33,11 @@ async function classifyNumber(req, res) {
     // Ensure properties only contain "armstrong", "odd", or "even"
     const properties = [];
     if (armstrong) properties.push("armstrong");
-    properties.push(num % 2 === 0 ? "even" : "odd");
+    if (num % 2 === 0) {
+      properties.push("even");
+    } else {
+      properties.push("odd");
+    }
 
     let funFact = null;
     try {
@@ -37,7 +50,8 @@ async function classifyNumber(req, res) {
     res.json({
       number: num,
       is_prime: prime,
-      properties: properties, // Fixed properties list
+      is_perfect: false,
+      properties: properties,
       digit_sum: sum,
       fun_fact: funFact,
     });
