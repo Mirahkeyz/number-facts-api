@@ -16,10 +16,10 @@ async function classifyNumber(req, res) {
   const num = parseFloat(number);
 
   // Check if the conversion resulted in NaN (e.g., for non-numeric strings)
-  if (isNaN(num)) {
+  if (isNaN(num) || !Number.isInteger(num)) {
     return res.status(400).json({
       number: number,
-      error: "Invalid input. Please provide a valid number.",
+      error: "Invalid input. Please provide a valid integer.",
     });
   }
 
