@@ -4,8 +4,8 @@ const { getFunFact } = require("../services/funFactService");
 async function classifyNumber(req, res) {
   const { number } = req.query;
   
-  // Stricter input validation
-  if (number === undefined || number === null || number === "" || isNaN(Number(number))) {
+  // Validate that number is provided and can be converted to a number
+  if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
@@ -15,6 +15,14 @@ async function classifyNumber(req, res) {
   // Convert the input to a number
   const num = Number(number);
   
+  // Ensure the input is a valid number
+  if (isNaN(num)) {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
+  
   try {
     // Perform all checks concurrently
     const [prime, armstrong, sum] = await Promise.all([
@@ -23,7 +31,7 @@ async function classifyNumber(req, res) {
       digitSum(num),
     ]);
     
-    // Prepare properties list with only allowed values
+    // Prepare properties list
     const properties = [];
     
     // Only add armstrong if true
@@ -43,8 +51,8 @@ async function classifyNumber(req, res) {
       funFact = "Error fetching fun fact.";
     }
     
-    // Return response
-    res.json({
+    // Always return 200 status code for valid numbers
+    res.status(200).json({
       number: num,
       is_prime: prime,
       is_perfect: false,
