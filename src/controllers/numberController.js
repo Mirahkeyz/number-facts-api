@@ -4,32 +4,72 @@ const { getFunFact } = require("../services/funFactService");
 async function classifyNumber(req, res) {
   const { number } = req.query;
 
-  // Check if the number is a valid number
-  if (isNaN(number)) {
-    return res.status(400).json({ number: req.query.number, error: true });
+  // Input validation – reject truly invalid inputs
+  if (number === undefined || number === null || number === "") {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
   }
 
-  const num = parseInt(number);
+  // Convert the input to a number
+  const num = parseFloat(number);
 
-  // Classification logic
-  const prime = isPrime(num);
-  const armstrong = isArmstrong(num);
-  const properties = [];
+  // Check if the conversion resulted in NaN or if it's not an integer
+  if (isNaN(num)) {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
 
-  if (armstrong) properties.push("armstrong");
-  properties.push(num % 2 === 0 ? "even" : "odd");
+  try {
+    const [prime, armstrong, sum] = await Promise.all([
+      isPrime(num),
+      isArmstrong(num),
+      digitSum(num),
+    ]);
 
-  const sum = digitSum(num);
-  const funFact = await getFunFact(num);
+    // Initialize properties as an empty array
+    const properties = [];
 
-  res.json({
-    number: num,
-    is_prime: prime,
-    is_perfect: false, // Perfect number is not implemented here
-    properties: properties,
-    digit_sum: sum,
-    fun_fact: funFact,
-  });
+    // Add "armstrong" if the number is an Armstrong number
+    if (armstrong) {
+      properties.push("armstrong");
+    }
+
+    // Add "even" or "odd" based on the number's parity
+    if (num % 2 === 0) {
+      properties.push("even");
+    } else {
+      properties.push("odd");
+    }
+
+    // Fetch fun fact
+    let funFact = null;
+    try {
+      funFact = await getFunFact(num);
+    } catch (funFactError) {
+      console.error("Error fetching fun fact:", funFactError);
+      funFact = "Error fetching fun fact.";
+    }
+
+    // Send the response
+    res.json({
+      number: num,
+      is_prime: prime,
+      is_perfect: false,
+      properties: properties, // Only contains "armstrong", "odd", or "even"
+      digit_sum: sum,
+      fun_fact: funFact,
+    });
+  } catch (error) {
+    console.error("Error classifying number:", error);
+    res.status(500).json({
+      number: num,
+      error: "An error occurred. Please try again later.",
+    });
+  }
 }
 
 module.exports = {
