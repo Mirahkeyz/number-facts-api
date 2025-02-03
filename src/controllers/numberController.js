@@ -4,15 +4,24 @@ const { getFunFact } = require("../services/funFactService");
 async function classifyNumber(req, res) {
   const { number } = req.query;
 
-  // Input validation – only reject non-numeric values
-  if (!number || isNaN(number)) {
+  // Input validation – only reject truly invalid inputs
+  if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
     });
   }
 
-  const num = parseFloat(number); // Parse to float to handle floating-point values
+  // Convert the input to a number
+  const num = parseFloat(number);
+
+  // Check if the conversion resulted in NaN (e.g., for non-numeric strings)
+  if (isNaN(num)) {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
 
   try {
     const [prime, armstrong, sum] = await Promise.all([
