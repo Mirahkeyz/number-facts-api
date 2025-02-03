@@ -14,6 +14,8 @@ This API classifies numbers and returns interesting mathematical properties alon
 
 **200 OK**
 
+```json
+
 `{
   "number": 371,
   "is_prime": false,
@@ -23,8 +25,11 @@ This API classifies numbers and returns interesting mathematical properties alon
   "fun_fact": "371 is an Armstrong number because 3^3 + 7^3 + 1^3 = 371"
 }`
 
+```
+
 **400 Bad Request**
 
+```json
 `{
   "number": "alphabet",
   "error": true
