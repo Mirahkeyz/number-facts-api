@@ -5,7 +5,7 @@ async function classifyNumber(req, res) {
   const { number } = req.query;
 
   // Input validation – reject truly invalid inputs
-  if (number === undefined || number === null || number.trim() === "") {
+  if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
@@ -16,10 +16,10 @@ async function classifyNumber(req, res) {
   const num = parseFloat(number);
 
   // Check if the conversion resulted in NaN or if it's not an integer
-  if (isNaN(num) || !Number.isInteger(num)) {
+  if (isNaN(num)) {
     return res.status(400).json({
       number: number,
-      error: "Invalid input. Please provide a valid integer.",
+      error: "Invalid input. Please provide a valid number.",
     });
   }
 
@@ -45,8 +45,14 @@ async function classifyNumber(req, res) {
       properties.push("odd");
     }
 
-    // Log the properties for debugging
-    console.log(`Number: ${num}, Properties: ${properties}`);
+    // Fetch fun fact
+    let funFact = null;
+    try {
+      funFact = await getFunFact(num);
+    } catch (funFactError) {
+      console.error("Error fetching fun fact:", funFactError);
+      funFact = "Error fetching fun fact.";
+    }
 
     // Send the response
     res.json({
@@ -55,7 +61,7 @@ async function classifyNumber(req, res) {
       is_perfect: false,
       properties: properties, // Only contains "armstrong", "odd", or "even"
       digit_sum: sum,
-      fun_fact: await getFunFact(num), // Fetch fun fact directly here
+      fun_fact: funFact,
     });
   } catch (error) {
     console.error("Error classifying number:", error);
