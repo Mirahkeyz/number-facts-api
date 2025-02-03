@@ -27,8 +27,12 @@ async function classifyNumber(req, res) {
       digitSum(num),
     ]);
 
-    const properties = [];
-    if (armstrong) properties.push("armstrong");
+    let properties = [];  // Initialize as an empty array
+
+    if (armstrong) {
+      properties.push("armstrong");
+    }
+
     if (num % 2 === 0) {
       properties.push("even");
     } else {
@@ -46,8 +50,8 @@ async function classifyNumber(req, res) {
     res.json({
       number: num,
       is_prime: prime,
-      is_perfect: false, // You might want to implement isPerfect check later
-      properties: properties,
+      is_perfect: false, 
+      properties: properties, // Use the filtered properties
       digit_sum: sum,
       fun_fact: funFact,
     });
