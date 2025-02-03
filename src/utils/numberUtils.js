@@ -19,10 +19,12 @@ function isArmstrong(num) {
 
 // Function to calculate the sum of digits
 function digitSum(num) {
-  return num
+  const absoluteNum = Math.abs(num); // Convert number to its absolute value
+  const sum = absoluteNum
     .toString()
     .split("")
     .reduce((acc, digit) => acc + Number(digit), 0);
+  return sum; // Ensure the result is always numeric and positive
 }
 
 module.exports = {
