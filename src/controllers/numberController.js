@@ -45,9 +45,15 @@ async function classifyNumber(req, res) {
       properties.push("odd");
     }
 
+    // Log the properties for debugging
+    console.log(`Number: ${num}, Properties: ${properties}`);
+
     // Ensure only valid properties are included in the response
     const validProperties = ["armstrong", "even", "odd"];
     const filteredProperties = properties.filter(property => validProperties.includes(property));
+
+    // Log filtered properties for debugging
+    console.log(`Filtered Properties: ${filteredProperties}`);
 
     // Fetch fun fact
     let funFact = null;
