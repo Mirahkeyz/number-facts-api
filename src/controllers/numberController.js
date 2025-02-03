@@ -30,15 +30,20 @@ async function classifyNumber(req, res) {
       digitSum(num),
     ]);
 
-    // Ensure properties only contain "armstrong", "odd", or "even"
+    // Initialize properties as an empty array
     const properties = [];
+
+    // Add "armstrong" if the number is an Armstrong number
     if (armstrong) properties.push("armstrong");
+
+    // Add "even" or "odd" based on the number's parity
     if (num % 2 === 0) {
       properties.push("even");
     } else {
       properties.push("odd");
     }
 
+    // Fetch fun fact
     let funFact = null;
     try {
       funFact = await getFunFact(num);
@@ -47,11 +52,12 @@ async function classifyNumber(req, res) {
       funFact = "Error fetching fun fact.";
     }
 
+    // Send the response
     res.json({
       number: num,
       is_prime: prime,
       is_perfect: false,
-      properties: properties,
+      properties: properties, // Only contains "armstrong", "odd", or "even"
       digit_sum: sum,
       fun_fact: funFact,
     });
