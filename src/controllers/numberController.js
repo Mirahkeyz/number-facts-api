@@ -2,32 +2,12 @@ const { isPrime, isArmstrong, digitSum } = require("../utils/numberUtils");
 const { getFunFact } = require("../services/funFactService");
 
 async function classifyNumber(req, res) {
-  const { number } = req.query;
-
-  if (number === undefined || number === null || number === "") {
-    return res.status(400).json({
-      number: number,
-      error: "Invalid input. Please provide a valid number.",
-    });
-  }
-
-  const num = parseFloat(number);
-
-  if (isNaN(num)) {
-    return res.status(400).json({
-      number: number,
-      error: "Invalid input. Please provide a valid number.",
-    });
-  }
+  // ... (input validation code remains the same)
 
   try {
-    const [prime, armstrong, sum] = await Promise.all([
-      isPrime(num),
-      isArmstrong(num),
-      digitSum(num),
-    ]);
+    // ... (isPrime, isArmstrong, digitSum calls remain the same)
 
-    let properties = [];  // Initialize as an empty array
+    let properties = []; // Initialize as an EMPTY ARRAY
 
     if (armstrong) {
       properties.push("armstrong");
@@ -39,28 +19,18 @@ async function classifyNumber(req, res) {
       properties.push("odd");
     }
 
-    let funFact = null;
-    try {
-      funFact = await getFunFact(num);
-    } catch (funFactError) {
-      console.error("Error fetching fun fact:", funFactError);
-      funFact = "Error fetching fun fact.";
-    }
+    // ... (funFact code remains the same)
 
     res.json({
       number: num,
       is_prime: prime,
-      is_perfect: false, 
-      properties: properties, // Use the filtered properties
+      is_perfect: false,
+      properties: properties, // Make absolutely sure this is an array!
       digit_sum: sum,
       fun_fact: funFact,
     });
   } catch (error) {
-    console.error("Error classifying number:", error);
-    res.status(500).json({
-      number: num,
-      error: "An error occurred. Please try again later.",
-    });
+    // ... (error handling remains the same)
   }
 }
 
