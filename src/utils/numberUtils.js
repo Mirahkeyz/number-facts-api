@@ -1,13 +1,15 @@
+// Function to check if a number is prime
 function isPrime(num) {
-  if (num <= 1 || !Number.isInteger(num)) return false;
+  if (num <= 1 || !Number.isInteger(num)) return false; // Reject non-integers and numbers <= 1
   for (let i = 2; i <= Math.sqrt(num); i++) {
     if (num % i === 0) return false;
   }
   return true;
 }
 
+// Function to check if a number is Armstrong
 function isArmstrong(num) {
- if (!Number.isInteger(num) || num < 0) return false; // Handle negative numbers and non-integers
+  if (!Number.isInteger(num) || num < 0) return false; // Reject non-integers and negative numbers
   const numStr = num.toString();
   const n = numStr.length;
   let sum = 0;
@@ -18,10 +20,10 @@ function isArmstrong(num) {
   return sum === num;
 }
 
-
+// Function to calculate the sum of digits
 function digitSum(num) {
-  if (!Number.isInteger(num)) return NaN; // Or throw an error, depending on your needs
-  const numStr = Math.abs(num).toString(); //handle negative numbers
+  if (!Number.isInteger(num)) return NaN; // Reject non-integers
+  const numStr = Math.abs(num).toString(); // Handle negative numbers
   let sum = 0;
   for (let i = 0; i < numStr.length; i++) {
     const digit = parseInt(numStr[i]);

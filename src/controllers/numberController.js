@@ -2,35 +2,65 @@ const { isPrime, isArmstrong, digitSum } = require("../utils/numberUtils");
 const { getFunFact } = require("../services/funFactService");
 
 async function classifyNumber(req, res) {
-  // ... (input validation code remains the same)
+  const { number } = req.query;
+
+  // Input validation – only reject truly invalid inputs
+  if (number === undefined || number === null || number === "") {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
+
+  // Convert the input to a number
+  const num = parseFloat(number);
+
+  // Check if the conversion resulted in NaN (e.g., for non-numeric strings)
+  if (isNaN(num)) {
+    return res.status(400).json({
+      number: number,
+      error: "Invalid input. Please provide a valid number.",
+    });
+  }
 
   try {
-    // ... (isPrime, isArmstrong, digitSum calls remain the same)
+    const [prime, armstrong, sum] = await Promise.all([
+      isPrime(num),
+      isArmstrong(num),
+      digitSum(num),
+    ]);
 
-    let properties = []; // Initialize as an EMPTY ARRAY
-
-    if (armstrong) {
-      properties.push("armstrong");
-    }
-
+    // Ensure properties only contain "armstrong", "odd", or "even"
+    const properties = [];
+    if (armstrong) properties.push("armstrong");
     if (num % 2 === 0) {
       properties.push("even");
     } else {
       properties.push("odd");
     }
 
-    // ... (funFact code remains the same)
+    let funFact = null;
+    try {
+      funFact = await getFunFact(num);
+    } catch (funFactError) {
+      console.error("Error fetching fun fact:", funFactError);
+      funFact = "Error fetching fun fact.";
+    }
 
     res.json({
       number: num,
       is_prime: prime,
       is_perfect: false,
-      properties: properties, // Make absolutely sure this is an array!
+      properties: properties,
       digit_sum: sum,
       fun_fact: funFact,
     });
   } catch (error) {
-    // ... (error handling remains the same)
+    console.error("Error classifying number:", error);
+    res.status(500).json({
+      number: num,
+      error: "An error occurred. Please try again later.",
+    });
   }
 }
 
