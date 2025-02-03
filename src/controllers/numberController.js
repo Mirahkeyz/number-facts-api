@@ -3,46 +3,38 @@ const { getFunFact } = require("../services/funFactService");
 
 async function classifyNumber(req, res) {
   const { number } = req.query;
-  
-  // Validate that number is provided and can be converted to a number
+
   if (number === undefined || number === null || number === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
     });
   }
-  
-  // Convert the input to a number
-  const num = Number(number);
-  
-  // Ensure the input is a valid number
+
+  const num = parseFloat(number);
+
   if (isNaN(num)) {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
     });
   }
-  
+
   try {
-    // Perform all checks concurrently
     const [prime, armstrong, sum] = await Promise.all([
       isPrime(num),
       isArmstrong(num),
       digitSum(num),
     ]);
-    
-    // Prepare properties list
+
     const properties = [];
-    
-    // Only add armstrong if true
-    if (armstrong) {
-      properties.push("armstrong");
+    if (armstrong) properties.push("armstrong");
+    if (num % 2 === 0) {
+      properties.push("even");
+    } else {
+      properties.push("odd");
     }
-    
-    // Add odd or even
-    properties.push(num % 2 === 0 ? "even" : "odd");
-    
-    // Fetch fun fact
+
     let funFact = null;
     try {
       funFact = await getFunFact(num);
@@ -50,12 +42,11 @@ async function classifyNumber(req, res) {
       console.error("Error fetching fun fact:", funFactError);
       funFact = "Error fetching fun fact.";
     }
-    
-    // Always return 200 status code for valid numbers
-    res.status(200).json({
+
+    res.json({
       number: num,
       is_prime: prime,
-      is_perfect: false,
+      is_perfect: false, // You might want to implement isPerfect check later
       properties: properties,
       digit_sum: sum,
       fun_fact: funFact,
