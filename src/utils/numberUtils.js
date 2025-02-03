@@ -1,6 +1,9 @@
 // Function to check if a number is prime
 function isPrime(num) {
-  if (num <= 1 || !Number.isInteger(num)) return false; // Reject non-integers and numbers <= 1
+  // Reject non-integers and numbers <= 1
+  if (num <= 1 || !Number.isInteger(num)) return false;
+  
+  // Check for primality
   for (let i = 2; i <= Math.sqrt(num); i++) {
     if (num % i === 0) return false;
   }
@@ -9,7 +12,9 @@ function isPrime(num) {
 
 // Function to check if a number is Armstrong
 function isArmstrong(num) {
-  if (!Number.isInteger(num)) return false; // Reject non-integers
+  // Reject non-integers
+  if (!Number.isInteger(num)) return false;
+  
   const digits = num.toString().split("");
   const sum = digits.reduce(
     (acc, digit) => acc + Math.pow(Number(digit), digits.length),
@@ -20,7 +25,8 @@ function isArmstrong(num) {
 
 // Function to calculate the sum of digits
 function digitSum(num) {
-  const absoluteNum = Math.abs(num); // Convert number to its absolute value
+  // Convert number to its absolute value and remove any decimal point
+  const absoluteNum = Math.abs(num);
   const sum = absoluteNum
     .toString()
     .replace(".", "") // Remove decimal point for floating-point numbers
