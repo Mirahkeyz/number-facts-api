@@ -5,7 +5,7 @@ async function classifyNumber(req, res) {
   const { number } = req.query;
 
   // Input validation – reject truly invalid inputs
-  if (number === undefined || number === null || number === "") {
+  if (number === undefined || number === null || number.trim() === "") {
     return res.status(400).json({
       number: number,
       error: "Invalid input. Please provide a valid number.",
@@ -48,30 +48,14 @@ async function classifyNumber(req, res) {
     // Log the properties for debugging
     console.log(`Number: ${num}, Properties: ${properties}`);
 
-    // Ensure only valid properties are included in the response
-    const validProperties = ["armstrong", "even", "odd"];
-    const filteredProperties = properties.filter(property => validProperties.includes(property));
-
-    // Log filtered properties for debugging
-    console.log(`Filtered Properties: ${filteredProperties}`);
-
-    // Fetch fun fact
-    let funFact = null;
-    try {
-      funFact = await getFunFact(num);
-    } catch (funFactError) {
-      console.error("Error fetching fun fact:", funFactError);
-      funFact = "Error fetching fun fact.";
-    }
-
     // Send the response
     res.json({
       number: num,
       is_prime: prime,
       is_perfect: false,
-      properties: filteredProperties, // Only contains "armstrong", "odd", or "even"
+      properties: properties, // Only contains "armstrong", "odd", or "even"
       digit_sum: sum,
-      fun_fact: funFact,
+      fun_fact: await getFunFact(num), // Fetch fun fact directly here
     });
   } catch (error) {
     console.error("Error classifying number:", error);
